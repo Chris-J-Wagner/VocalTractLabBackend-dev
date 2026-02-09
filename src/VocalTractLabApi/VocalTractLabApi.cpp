@@ -541,6 +541,73 @@ int vtlExportTractSvg(double *tractParams, const char *fileName)
   }
 }
 
+// ****************************************************************************
+// Exports the vocal tract contours for the given vector of vocal tract
+// parameters as a string.
+//
+// Function return value:
+// 0: success.
+// 1: The API has not been initialized.
+// 2: Writing the SVG file failed.
+// ****************************************************************************
+
+int vtlExportTractSvgToStr(double *tractParams, char **svgStr, size_t *svgStrSize)
+{
+  if (!vtlApiInitialized)
+  {
+    printf("Error: The API has not been initialized.\n");
+    return 1;
+  }
+
+  *svgStr = NULL;
+  *svgStrSize = 0;
+
+  // Store the current control parameter values.
+  vocalTract->storeControlParams();
+
+  // Set the given vocal tract parameters.
+  int i;
+  for (i = 0; i < VocalTract::NUM_PARAMS; i++)
+  {
+    vocalTract->param[i].x = tractParams[i];
+  }
+  vocalTract->calculateAll();
+  
+  // Save the contour as SVG file.
+  std::string s = vocalTract->exportTractContourSvgToStr(false, false);
+  bool ok = !s.empty();
+
+  // Restore the previous control parameter values and 
+  // recalculate the vocal tract shape.
+
+  vocalTract->restoreControlParams();
+  vocalTract->calculateAll();
+
+  if (ok)
+  {
+    size_t n = s.size();
+    *svgStr = (char*)std::malloc(n+1);
+    if(!*svgStr)
+    {
+        printf("Error: Memory allocation failed in vtlExportTractSvgToStr().\n");
+        return 2;
+    }
+
+    memcpy(*svgStr, s.c_str(), n);
+    (*svgStr)[n] = '\0'; // keep svgStr as a valid C string (null-terminated) if maybe required later 
+    *svgStrSize = n; // return the size of the string (without the terminating null character)
+    return 0;
+  }
+  else
+  {
+    return 2;
+  }
+}
+
+void vtlFree(void* p)
+{
+    std::free(p);
+}
 
 // ****************************************************************************
 // Provides the tube data (especially the area function) for the given vector

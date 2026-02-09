@@ -6813,10 +6813,10 @@ bool VocalTract::exportCrossSections(const string &fileName)
 
 
 // ****************************************************************************
-// Save the vocal tract contour lines as SVG file.
+// Write the vocal tract contour lines to a stream
 // ****************************************************************************
 
-bool VocalTract::exportTractContourSvg(const string &fileName, bool addCenterLine, bool addCutVectors)
+bool VocalTract::exportTractContourSvg(std::ostream& os, bool addCenterLine, bool addCutVectors)
 {
   const double SCALE = 37.8;    // 1 cm in Corel Draw are 37.8 "default units" (pixels?)
   int indent = 0;
@@ -6828,14 +6828,6 @@ bool VocalTract::exportTractContourSvg(const string &fileName, bool addCenterLin
   Point3D Q;
   bool includeTeeth = true;
   bool includeRibs = false;
-
-  ofstream os(fileName);
-
-  if (!os)
-  {
-    printf("Error: Could not open the SVG file\n");
-    return false;
-  }
 
   // Write the "header and open the svg- and the group element.
 
@@ -7071,10 +7063,36 @@ bool VocalTract::exportTractContourSvg(const string &fileName, bool addCenterLin
   indent -= 2;
   os << "</svg>" << endl;
 
-  // Close the file *************************************************
+  return true;
+}
+
+// ****************************************************************************
+// Save the vocal tract contour lines as SVG file.
+// ****************************************************************************
+bool VocalTract::exportTractContourSvg(const string &fileName, bool addCenterLine, bool addCutVectors)
+{
+  ofstream os(fileName);
+  if (!os)
+  {
+    printf("Error: Could not open file '%s' for writing.\n", fileName.c_str());
+    return false;
+  }
+
+  exportTractContourSvg(os, addCenterLine, addCutVectors);
+
   os.close();
 
   return true;
+}
+
+// ****************************************************************************
+// Save the vocal tract contour lines to a string.
+// ****************************************************************************
+std::string VocalTract::exportTractContourSvgToStr(bool addCenterLine, bool addCutVectors)
+{
+  std::ostringstream oss;
+  exportTractContourSvg(oss, addCenterLine, addCutVectors);
+  return oss.str();
 }
 
 
