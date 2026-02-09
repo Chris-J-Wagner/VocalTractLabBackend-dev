@@ -44,6 +44,7 @@ extern "C"{ /* start extern "C" */
 #endif  // WIN32
 
 #include <stdbool.h>
+#include <stddef.h>
 
 // ****************************************************************************
 // The exported C-compatible functions.
@@ -202,6 +203,23 @@ C_EXPORT int vtlGetTractParams(const char *shapeName, double *tractParams);
 
 C_EXPORT int vtlExportTractSvg(double *tractParams, const char *fileName);
 
+// ****************************************************************************
+// Exports the vocal tract contours for the given vector of vocal tract
+// parameters as a string.
+//
+// Function return value:
+// 0: success.
+// 1: The API has not been initialized.
+// 2: Writing the SVG file failed.
+// ****************************************************************************
+
+C_EXPORT int vtlExportTractSvgToStr(double *tractParams, char **svgStr, size_t *svgStrSize);
+
+// ****************************************************************************
+// Provide a custom free function to free the memory allocated for the SVG string.
+// ****************************************************************************
+
+C_EXPORT void vtlFree(void* p);
 
 // ****************************************************************************
 // Provides the tube data (especially the area function) for the given vector
