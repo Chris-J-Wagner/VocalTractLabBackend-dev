@@ -571,7 +571,8 @@ int vtlExportTractSvgToStr(double *tractParams, char **svgStr, size_t *svgStrSiz
   {
     vocalTract->param[i].x = tractParams[i];
   }
-  vocalTract->calculateAll();
+
+  vocalTract->calcLimitedSurfaces();
   
   // Save the contour as SVG file.
   std::string s = vocalTract->exportTractContourSvgToStr(false, false);
@@ -580,8 +581,8 @@ int vtlExportTractSvgToStr(double *tractParams, char **svgStr, size_t *svgStrSiz
   // Restore the previous control parameter values and 
   // recalculate the vocal tract shape.
 
-  vocalTract->restoreControlParams();
-  vocalTract->calculateAll();
+  vocalTract->restoreControlParams(false);
+  vocalTract->calcLimitedSurfaces();
 
   if (ok)
   {
