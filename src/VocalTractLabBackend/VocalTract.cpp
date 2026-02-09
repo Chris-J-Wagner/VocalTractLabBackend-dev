@@ -2390,6 +2390,27 @@ void VocalTract::calculateAll()
 }
 
 
+void VocalTract::calcLimitedSurfaces()
+{
+  // ****************************************************************
+  // Set the limited parameter values equal to the set values.
+  // ****************************************************************
+
+  int i;
+  for (i=0; i < NUM_PARAMS; i++)
+  {
+    restrictParam(i);
+    param[i].limitedX = param[i].x;
+  }
+
+  // ****************************************************************
+  // Do the calculations.
+  // ****************************************************************
+
+  calcSurfaces();
+}
+
+
 // ****************************************************************************
 /// Calculate all surfaces of the model.
 // ****************************************************************************
@@ -7657,7 +7678,7 @@ void VocalTract::storeControlParams()
 /// Restore the temporarily stored (cached) control parameter values.
 // ****************************************************************************
 
-void VocalTract::restoreControlParams()
+void VocalTract::restoreControlParams(bool recalculate)
 {
   if (hasStoredControlParams == false)
   {
@@ -7671,7 +7692,10 @@ void VocalTract::restoreControlParams()
   }
   hasStoredControlParams = false;
 
-  calculateAll();
+  if (recalculate)
+  {
+    calculateAll();
+  }
 }
 
 

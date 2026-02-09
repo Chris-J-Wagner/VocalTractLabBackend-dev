@@ -415,6 +415,7 @@ public:
   // ****************************************************************
 
   void calcSurfaces();
+  void calcLimitedSurfaces();
   void calcLips();
   void getImportantLipPoints(Point3D &onset, Point3D &corner, Point3D &F0, Point3D &F1, double &yClose);
   void calcRadiation(Point3D lipCorner);
@@ -477,7 +478,7 @@ public:
   void clearUnsavedChanges();
 
   void storeControlParams();
-  void restoreControlParams();
+  void restoreControlParams(bool recalculate = true);
 
   // **************************************************************************
   /// Private data.
